@@ -1,0 +1,22 @@
+Phalcon 4 CRUD Tutorial
+
+1) cara mengaktifkan server di project phalcon :
+
+    "php -S localhost:8000 -t .htrouter.php -t public"
+
+2) cara membuat model di project :
+
+    1> buat tabel di database terlebih dahulu
+    2> di terminal ketik "phalcon model User --name=users" --> contoh jika ingin membuat model User
+
+3) cara membuat controller di project :
+
+    ketik di terminal "phalcon controller <nama_controller_yg_diinginkan>"
+
+4) cara membuat router di project : 
+
+    "$router->addGet('/user','User::index')"
+
+
+Selengkapnya di dokumentansi framework Phalcon (https://docs.phalcon.io/4.0/en/introduction) --> dokumentasi framework Phalcon versi 4.*
+
