@@ -27,6 +27,30 @@ class UserController extends \Phalcon\Mvc\Controller
 
     }
 
+    public function storeAction()
+    {
+        $this->view->disable();
+
+        $request = $this->request->getJsonRawBody();
+        $response = new Response();
+
+        $user = new User;
+        $user->user_username = $request->username;
+        $user->user_password = $this->security->hash($request->password);
+        $user->user_email = $request->email;
+        $user->save();
+
+        $result = [
+            'code' => 200,
+            'response' => 'Success',
+            'message' => 'A new user is succesfully registered!',
+            'data' => $user
+        ];
+
+        $response->setStatusCode(200,'Success');
+        return $response->setJsonContent($result);
+    }
+
     public function showAction($id)
     {
         $this->view->disable(); // Untuk menonaktifkan view
@@ -67,11 +91,81 @@ class UserController extends \Phalcon\Mvc\Controller
     }
 
     public function updateAction($id) {
+        $this->view->disable();
 
+        $request = $this->request->getJsonRawBody();
+        $response = new Response();
+
+        $user = User::findFirst([
+            'conditions' => 'user_id = :id:',
+            'bind' => [
+                'id' => $id
+            ]
+        ]);
+
+        if($user !== NULL) {
+            $user->user_email = $request->email;
+            $user->user_first_name = $request->first_name;
+            $user->user_last_name = $request->last_name;
+            $user->save();
+            
+            $result = [
+                'code' => 200,
+                'response' => 'Success',
+                'message' => 'Your profile with user '.$id.' is succesfully updated!',
+                'data' => $user
+            ];
+
+            $response->setStatusCode(200,'Success');
+            return $response->setJsonContent($result);
+        } else {
+            $result = [
+                'code' => 400,
+                'response' => 'Failed',
+                'message' => 'Your profile with user '.$id.' is not found! Please try again!',
+                'data' => null
+            ];
+
+            $response->setStatusCode(400,'Not Found');
+            return $response->setJsonContent($result);
+        }
     }
 
     public function deleteAction($id) {
-        
+        $this->view->disable();
+
+        $response = new Response();
+
+        $user = User::findFirst([
+            'conditions' => 'user_id = :id:',
+            'bind' => [
+                'id' => $id
+            ]
+        ]);
+
+        if($user !== NULL) {
+            $user->delete();
+
+            $result = [
+                'code' => 200,
+                'response' => 'Success',
+                'message' => 'Your profile with user '.$id.' is succesfully deleted!',
+                'data' => null
+            ];
+
+            $response->setStatusCode(200,'Success');
+            return $response->setJsonContent($result);
+        } else {
+            $result = [
+                'code' => 400,
+                'response' => 'Failed',
+                'message' => 'Your profile with user '.$id.' is not found! Please try again!',
+                'data' => null
+            ];
+
+            $response->setStatusCode(400,'Not Found');
+            return $response->setJsonContent($result);
+        }
     }
 
     public function testingSessionAction()
