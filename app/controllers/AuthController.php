@@ -43,7 +43,14 @@ class AuthController extends \Phalcon\Mvc\Controller
         $username = $credentials->username;
         $password = $credentials->password;
 
-        $user = User::findFirst("user_username = '$username'");
+        // $user = User::findFirst("user_username = '$username'");
+
+        $user = User::findFirst([
+            'conditions' => 'user_username = :username:',
+            'bind' => [
+                'username' => $username
+            ]
+        ]);
 
         // var_dump($user);die();
 
